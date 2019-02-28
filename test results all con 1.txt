@@ -1,0 +1,6 @@
+test:  0
+e: 0    hidden size:  49
+test:  0
+e: 0    hidden size:  49
+15100.35387504447
+e: 1    hidden size:  49
