@@ -9,6 +9,7 @@
 #SBATCH --mail-type=END
 #SBATCH --mail-user=sk7090@nyu.edu
 #SBATCH --output=slurm_%j.out
+
 module purge
 module load python3/intel/3.6.3
 module load zlib/intel/1.2.8
@@ -16,4 +17,4 @@ module load intel/17.0.1
 
 cd $SCRATCH
 
-srun python3 -u "neural network all digits.py" > output.out
+srun python3 -u "pyramid2x2.py" > output2x2.out

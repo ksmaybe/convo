@@ -75,8 +75,8 @@ test_label=np.load('test_label.npy')
 
 
 
-fg=open("test results all con.txt",'a+')
-for times in range(10):
+fg=open("test_res_all_con_1.txt",'a+')
+for times in range(0):
     start = time.time()
     print("test: ",times,file=fg)
     print("test: ",times)
