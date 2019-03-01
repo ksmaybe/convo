@@ -2421,3 +2421,9 @@ test:  0
 e: 0    hidden size:  49
 test:  0
 e: 0    hidden size:  49
+test:  0
+e: 0    hidden size:  49
+test:  0
+e: 0    hidden size:  49
+16920.34106303762
+e: 1    hidden size:  49
