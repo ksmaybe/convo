@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --time=5:00:00
 #SBATCH --mem=64GB
-#SBATCH --job-name=c2x2
+#SBATCH --job-name=c4x4
 #SBATCH --mail-type=END
 #SBATCH --mail-user=sk7090@nyu.edu
 #SBATCH --output=slurm_%j.out
@@ -17,4 +17,4 @@ module load jupyter-kernels/py3.5
 
 cd $SCRATCH
 
-srun python3 -u "pyramid2x2.py" > output2x2.out
+srun python3 -u "pyramid4x4.py" > output4x4.out

@@ -4,7 +4,13 @@ import struct
 import gzip
 import numpy as np
 import time
+
+import matplotlib
 import copy
+import notebook
+
+matplotlib.use('Agg')
+import seaborn as sns;sns.set()
 
 lr=0.5   #learning rate
 
@@ -70,66 +76,24 @@ class Neural_NetWork(object):
         o=self.feed_forward(X)
         self.back_propagation(X,y,o)
 
-#obtain train images
-f = gzip.open('train-images-idx3-ubyte.gz','r')
-train_lst=np.array([])
+train_lst=np.load('train_lst.npy')
+test_lst=np.load('test_lst.npy')
+train_label=np.load('train_label.npy')
+test_label=np.load('test_label.npy')
 
-for i in range(2):
-    buf = f.read(8)
-    labels = np.frombuffer(buf, dtype=np.uint8).astype(np.int64)
-
-buf = f.read(28*28*60001)
-labels = np.frombuffer(buf, dtype=np.uint8).astype(np.int64)
-train_lst=np.append(train_lst,labels)
-train_lst=train_lst.reshape(int(len(train_lst)/(28*28)),28*28)/255
-
-#obtain train labels
-f = gzip.open('train-labels-idx1-ubyte.gz','r')
-train_labeler=np.array([])
-
-for i in range(1):
-    buf = f.read(8)
-    labels = np.frombuffer(buf, dtype=np.uint8).astype(np.int64)
-for i in range(60000):
-    buf = f.read(1)
-    labels = np.frombuffer(buf, dtype=np.uint8).astype(np.int64)
-    train_labeler=np.append(train_labeler,labels)
-train_label=[]
-for j in range(len(train_labeler)):
-    x=[0]*10
-    x[int(train_labeler[j])]=1
-    train_label.append(x)
-
-#obtain test images
-f = gzip.open('t10k-images-idx3-ubyte.gz','r')
-test_lst=np.array([])
-
-for i in range(2):
-    buf = f.read(8)
-    labels = np.frombuffer(buf, dtype=np.uint8).astype(np.int64)
-buf = f.read(28*28*10000)
-labels = np.frombuffer(buf, dtype=np.uint8).astype(np.int64)
-test_lst=np.append(test_lst,labels)
-test_lst=test_lst.reshape(int(len(test_lst)/(28*28)),28*28)/255
-
-
-#obtain test label
-f = gzip.open('t10k-labels-idx1-ubyte.gz','r')
-test_labeler=np.array([])
-
-for i in range(1):
-    buf = f.read(8)
-    labels = np.frombuffer(buf, dtype=np.uint8).astype(np.int64)
-for i in range(10000):
-    buf = f.read(1)
-    labels = np.frombuffer(buf, dtype=np.uint8).astype(np.int64)
-    test_labeler=np.append(test_labeler,labels)
-test_label=[]
-for j in range(len(test_labeler)):
-    x=[0]*10
-    x[int(test_labeler[j])]=1
-    test_label.append(x)
-
+x1=[i for i in range(4)]
+x5=[]
+x6=[]
+x7=[]
+for i in range(4):
+    for j in range(4):
+        x5.append(x1[j]+28*i)
+for i in range(7):
+    for e in x5:
+        x6.append(e+4*i)
+for i in range(7):
+    for e in x6:
+        x7.append(e+112*i)
 
 
 
@@ -142,44 +106,8 @@ for j in range(len(test_labeler)):
 #         y=train_label[i]
 #         o=net.feed_forward(X)
 #         net.train(X,y)
-lst=[i for i in range(28*28)]
-lst1=copy.copy(lst)
-cc1=[]
-cc2=[]
-cc3=[]
-cc4=[]
-x=0
-for i in range(7):
-    for j in range(4):
-        cc1.append(x)
-        x+=1
-    for j in range(4):
-        cc2.append(x)
-        x+=1
-    for j in range(4):
-        cc3.append(x)
-        x+=1
-    for j in range(4):
-        cc4.append(x)
-        x+=1
 
-kk=0
-for i in range(7):
-    for j in range(len(cc1)):
-        lst1[kk]=lst[112*i+cc1[j]]
-        kk+=1
-    for j in range(len(cc2)):
-        lst1[kk]=lst[112*i+cc2[j]]
-        kk+=1
-    for j in range(len(cc2)):
-        lst1[kk]=lst[112*i+cc3[j]]
-        kk+=1
-    for j in range(len(cc2)):
-        lst1[kk]=lst[112*i+cc4[j]]
-        kk+=1
-
-
-fg=open("test results 4x4 2.txt",'a+')
+fg=open("test_res_4x4_1.txt",'a+')
 #first
 for times in range(10):
     start=time.time()
@@ -195,7 +123,7 @@ for times in range(10):
             xx=train_lst[i]
             X=[0 for i2 in range(784)]
             for ii in range(784):
-                X[ii]=xx[lst1[ii]]
+                X[ii]=xx[x7[ii]]
             y=train_label[i]
             o=net.feed_forward(X)
             net.train(X,y)
@@ -217,7 +145,7 @@ for times in range(10):
         xx=test_lst[i]
         X=[0 for i2 in range(784)]
         for ii in range(784):
-            X[ii]=xx[lst1[ii]]
+            X[ii]=xx[x7[ii]]
         o=net.feed_forward(X)
         x=0
         y=0
@@ -253,3 +181,10 @@ for times in range(10):
     print("success rate: ",float(success/len(test_label)))
     print()
     print()
+    x8 = [0] * 784
+    for iii in range(len(x7)):
+        x8[x7[iii]] = net.Weight_1[0][iii]
+    map = np.array(x8).reshape((28, 28))
+    ax = sns.heatmap(map)
+    fig = ax.get_figure()
+    fig.savefig('4x4pic/heat4x4_' + str(times) + '.png')

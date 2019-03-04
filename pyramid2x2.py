@@ -1,10 +1,15 @@
 from __future__ import print_function,unicode_literals
 from __future__ import absolute_import,division
-import struct
-import gzip
+
 import numpy as np
 import time
+
+import matplotlib
 import copy
+import notebook
+
+matplotlib.use('Agg')
+import seaborn as sns;sns.set()
 
 lr=0.5   #learning rate
 
@@ -97,13 +102,13 @@ for j in range(14):
     x3.append(x1[2*j+1])
     x3.append(x2[2*j])
     x3.append(x2[2*j+1])
-print(x3)
 for i in range(14):
     for j in range(len(x3)):
         x4.append(x3[j]+i*56)
-
-fg=open("test_res_2x2_1.txt",'a+')
+x5 = copy.copy(x4)
+fg=open("test_res_2x2_2.txt",'a+')
 #first
+
 for times in range(10):
     start=time.time()
     print("test: ",times,file=fg)
@@ -131,6 +136,8 @@ for times in range(10):
             break
         net.old_error=net.new_error
         net.new_error=0
+        #check
+
     end=time.time()
     #draw confusion matrix
 
@@ -176,3 +183,11 @@ for times in range(10):
     print("success rate: ",float(success/len(test_label)))
     print()
     print()
+    x6 = [0] * 784
+    for iii in range(len(x5)):
+        x6[x5[iii]] = net.Weight_1[0][iii]
+    map = np.array(x6).reshape((28, 28))
+    ax = sns.heatmap(map)
+    fig = ax.get_figure()
+    fig.savefig('2x2pic/heat2x2_' + str(times) + '.png')
+
