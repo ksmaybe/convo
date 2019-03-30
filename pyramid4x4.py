@@ -6,10 +6,12 @@ import numpy as np
 import time
 
 import matplotlib
+matplotlib.use('Agg')
 import copy
 import notebook
+from matplotlib import pyplot
 
-matplotlib.use('Agg')
+
 import seaborn as sns;sns.set()
 
 lr=0.5   #learning rate
@@ -181,6 +183,7 @@ for times in range(10):
     print("success rate: ",float(success/len(test_label)))
     print()
     print()
+    pyplot.clf()
     x8 = [0] * 784
     for iii in range(len(x7)):
         x8[x7[iii]] = net.Weight_1[0][iii]

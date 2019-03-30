@@ -3,6 +3,13 @@ import gzip
 import numpy as np
 import time
 
+import matplotlib
+import copy
+import notebook
+from matplotlib import pyplot
+
+matplotlib.use('Agg')
+import seaborn as sns;sns.set()
 
 lr=0.5   #learning rate
 print("hahaha")
@@ -68,71 +75,16 @@ class Neural_NetWork(object):
         o=self.feed_forward(X)
         self.back_propagation(X,y,o)
 
-#obtain train images
-f = gzip.open('train-images-idx3-ubyte.gz','r')
-train_lst=np.array([])
+train_lst=np.load('train_lst.npy')
+test_lst=np.load('test_lst.npy')
+train_label=np.load('train_label.npy')
+test_label=np.load('test_label.npy')
 
-for i in range(2):
-    buf = f.read(8)
-    labels = np.frombuffer(buf, dtype=np.uint8).astype(np.int64)
+fg=open("test results all con_49__.txt",'a+')
 
-buf = f.read(28*28*60001)
-labels = np.frombuffer(buf, dtype=np.uint8).astype(np.int64)
-train_lst=np.append(train_lst,labels)
-train_lst=train_lst.reshape(int(len(train_lst)/(28*28)),28*28)/255
-
-
-#obtain train labels
-f = gzip.open('train-labels-idx1-ubyte.gz','r')
-train_labeler=np.array([])
-
-for i in range(1):
-    buf = f.read(8)
-    labels = np.frombuffer(buf, dtype=np.uint8).astype(np.int64)
-for i in range(60000):
-    buf = f.read(1)
-    labels = np.frombuffer(buf, dtype=np.uint8).astype(np.int64)
-    train_labeler=np.append(train_labeler,labels)
-train_label=[]
-for j in range(len(train_labeler)):
-    x=[0]*10
-    x[int(train_labeler[j])]=1
-    train_label.append(x)
-np.save('train_label',np.array(train_label))
-#obtain test images
-f = gzip.open('t10k-images-idx3-ubyte.gz','r')
-test_lst=np.array([])
-
-for i in range(2):
-    buf = f.read(8)
-    labels = np.frombuffer(buf, dtype=np.uint8).astype(np.int64)
-buf = f.read(28*28*10000)
-labels = np.frombuffer(buf, dtype=np.uint8).astype(np.int64)
-test_lst=np.append(test_lst,labels)
-test_lst=test_lst.reshape(int(len(test_lst)/(28*28)),28*28)/255
-
-
-#obtain test label
-f = gzip.open('t10k-labels-idx1-ubyte.gz','r')
-test_labeler=np.array([])
-
-for i in range(1):
-    buf = f.read(8)
-    labels = np.frombuffer(buf, dtype=np.uint8).astype(np.int64)
-for i in range(10000):
-    buf = f.read(1)
-    labels = np.frombuffer(buf, dtype=np.uint8).astype(np.int64)
-    test_labeler=np.append(test_labeler,labels)
-test_label=[]
-for j in range(len(test_labeler)):
-    x=[0]*10
-    x[int(test_labeler[j])]=1
-    test_label.append(x)
-np.save('text_label',np.array(test_label))
-
-
-fg=open("test results all con.txt",'a+')
 for times in range(10):
+    title="weights1_49_"+str(times)
+    fz = open(title, 'a+')
     start = time.time()
     print("test: ",times,file=fg)
     print("test: ",times)
@@ -195,70 +147,8 @@ for times in range(10):
     print("success rate: ",float(success/len(test_label)))
     print()
     print()
-
-for times in range(10):
-    start = time.time()
-    print("test: ",times,file=fg)
-    print("test: ",times)
-    #start of training
-    net=Neural_NetWork(196)
-    lstp=[]
-    for e in range(100):
-        print("e:",e,"  ","hidden size: ",net.hidden_size,file=fg)
-        print("e:",e,"  ","hidden size: ",net.hidden_size)
-        for i in range(len(train_lst)):
-            X=train_lst[i]
-            y=train_label[i]
-            o=net.feed_forward(X)
-            net.train(X,y)
-            net.new_error+=net.o_error
-        lstp.append(net.new_error)
-        print(net.new_error,file=fg)
-        print(net.new_error)
-        if net.old_error-net.new_error<5 and e>10 or net.new_error<1000:  #after 10 epoches and change in sum of error between epoch very small
-            break
-        net.old_error=net.new_error
-        net.new_error=0
-    end = time.time()
-    #draw confusion matrix
-    confusion_matrix=np.array([0]*100).reshape(10,10)
-    success=0
-    for i in range(len(test_label)):
-
-        o=net.feed_forward(test_lst[i])
-        x=0
-        y=0
-        for j in range(10):
-            if test_label[i][j]==1:
-                x=j
-                break
-
-        for j in range(len(o)):
-            if max(o)==o[j]:
-                y=j
-                break
-        confusion_matrix[x][y]+=1
-        if x==y:
-            success+=1
-
-    print(file=fg)
-    print("confusion matrix",file=fg)
-    print(confusion_matrix,file=fg)
-    print(file=fg)
-    print("time taken: ", end - start, file=fg)
-    print("success: ",success,'/',len(test_label),file=fg)
-    print("success rate: ",float(success/len(test_label)),file=fg)
-    print(file=fg)
-    print(file=fg)
-    print()
-    print("confusion matrix")
-    print(confusion_matrix)
-    print()
-    print("time taken: ", end - start)
-    print("success: ",success,'/',len(test_label))
-    print("success rate: ",float(success/len(test_label)))
-    print()
-    print()
+    for i in range(784):
+            print(net.Weight_1[i],file=fz)
 
 # for times in range(10):
 #     print("test: ",times,file=fg)
